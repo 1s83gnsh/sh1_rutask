@@ -1,11 +1,13 @@
 <?php
-require_once __DIR__ . '/../Libraries/Controller.php';
+namespace App\Controller;
+
+use App\Libraries\Controller;
 
 class Home extends Controller {
     public function __construct() {
         $data = [
-            'header' => htmlspecialchars('Simple PHP MVC Framework'),
-            'sub_header' => htmlspecialchars('Just what you need!')
+            'header' => 'Simple PHP MVC Framework',
+            'sub_header' => 'Just what you need!'
         ];
         $this->view('section/header');
         $this->view('home', $data);
