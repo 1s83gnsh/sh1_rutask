@@ -1,25 +1,26 @@
 <?php
+// Загрузка конфигурации
 require_once 'app/config.php';
 
+// Автозагрузка классов
 spl_autoload_register(function ($class) {
-    $paths = [
-        'app/Libraries/' . $class . '.php',
-        'app/Controller/' . $class . '.php',
-        'app/Model/' . $class . '.php'
-    ];
-    foreach ($paths as $file) {
-        if (file_exists($file)) {
-            require $file;
-            return;
-        }
+    $file = 'app/Libraries/' . $class . '.php';
+    if (file_exists($file)) {
+        require $file;
+        return;
+    }
+    $file = 'app/Controller/' . $class . '.php';
+    if (file_exists($file)) {
+        require $file;
+        return;
+    }
+    $file = 'app/Model/' . $class . '.php';
+    if (file_exists($file)) {
+        require $file;
+        return;
     }
 });
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = trim($uri, '/');
-
-if ($uri === '') {
-    $controller = new Home();
-} else {
-    die('Route not found');
-}
+// Запуск роутера
+$router = new Router();
+$router->dispatch();
