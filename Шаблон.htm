@@ -1,0 +1,136 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap 4.6.2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- Font Awesome 5 -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+
+    <title>Шаблон панели</title>
+    <style>
+        :root { --sidebar-width: 260px; }
+        .page { min-height: 100vh; display: flex; flex-direction: column; padding-top: 56px; background: #f8f9fa; }
+        .layout { flex: 1 1 auto; display: flex; }
+        .sidebar { width: var(--sidebar-width); flex: 0 0 var(--sidebar-width); background: #212529; color: #fff; position: fixed; top: 56px; bottom: 0; left: 0; transform: translateX(0); transition: transform .2s ease; z-index: 1030; overflow-y: auto; }
+        .sidebar .nav-link { color: #adb5bd; padding: .65rem 1rem; border-left: 3px solid transparent; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #fff; background: rgba(255,255,255,.05); border-left-color: #17a2b8; }
+        .sidebar-collapsed .sidebar { transform: translateX(-100%); }
+        .sidebar-collapsed .content { margin-left: 0; }
+        .content { flex: 1 1 auto; margin-left: var(--sidebar-width); padding: 1rem; transition: margin-left .2s ease; }
+        footer.footer { background: #fff; border-top: 1px solid #e9ecef; padding: .75rem 1rem; color: #6c757d; font-size: .875rem; }
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .content { margin-left: 0; }
+            .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 1025; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+            .backdrop.show { opacity: 1; pointer-events: auto; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навбар -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <button id="sidebarToggle" class="btn btn-outline-light mr-2" type="button"><i class="fas fa-bars"></i></button>
+        <a class="navbar-brand font-weight-bold" href="#"><i class="fas fa-columns mr-1"></i> Панель</a>
+
+        <!-- Кнопка "..." -->
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle px-2" href="#" id="menuDots" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="menuDots">
+                    <!-- Для авторизованного -->
+                    <div class="auth-user">
+                        <h6 class="dropdown-header"><i class="fas fa-user mr-1"></i><span id="ddName">Геннадий</span></h6>
+                        <a class="dropdown-item" href="#profile"><i class="fas fa-id-card mr-2"></i>Профиль</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#logout"><i class="fas fa-sign-out-alt mr-2"></i>Выход</a>
+                    </div>
+                    <!-- Для гостя -->
+                    <div class="auth-guest">
+                        <a class="dropdown-item" href="#login"><i class="fas fa-sign-in-alt mr-2"></i>Вход</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="page" id="page">
+        <!-- Сайдбар -->
+        <aside id="sidebar" class="sidebar">
+            <div class="px-3 py-3 border-bottom border-secondary d-flex align-items-center">
+                <i class="fas fa-stream mr-2 text-info"></i><span class="text-monospace">Навигация</span>
+            </div>
+            <nav class="nav flex-column py-2">
+                <a class="nav-link active" href="#users"><i class="fas fa-users"></i> Пользователи</a>
+                <a class="nav-link" href="#tasks"><i class="fas fa-tasks"></i> Задачи</a>
+                <a class="nav-link" href="#boards"><i class="fas fa-columns"></i> Доски</a>
+            </nav>
+        </aside>
+
+        <div id="backdrop" class="backdrop"></div>
+
+        <!-- Контент -->
+        <main class="layout">
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3"><i class="fas fa-info-circle"></i> Контент</h5>
+                            <p>Теперь меню «…» показывает вход или профиль/выход в зависимости от состояния.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Футер -->
+        <footer class="footer text-center">
+            <span>&copy; <span id="year"></span> Сделано: <strong>Геннадий</strong></span>
+        </footer>
+    </div>
+
+    <!-- Скрипты -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        (function () {
+            var page = document.getElementById('page');
+            var sidebar = document.getElementById('sidebar');
+            var backdrop = document.getElementById('backdrop');
+            var toggleBtn = document.getElementById('sidebarToggle');
+
+            // Авторизация
+            var isAuthenticated = true; // переключите для теста
+            var profileName = 'Геннадий';
+
+            document.getElementById('ddName').textContent = profileName;
+            document.querySelector('.auth-user').style.display = isAuthenticated ? 'block' : 'none';
+            document.querySelector('.auth-guest').style.display = isAuthenticated ? 'none' : 'block';
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // Тоггл сайдбара
+            toggleBtn.addEventListener('click', function () {
+                if (window.innerWidth < 992) {
+                    sidebar.classList.toggle('show');
+                    backdrop.classList.toggle('show');
+                    document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+                } else {
+                    page.classList.toggle('sidebar-collapsed');
+                }
+            });
+            backdrop.addEventListener('click', function () {
+                sidebar.classList.remove('show');
+                backdrop.classList.remove('show');
+                document.body.style.overflow = '';
+            });
+        })();
+    </script>
+</body>
+</html>

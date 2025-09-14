@@ -1,17 +1,14 @@
 ﻿<?php
-// Класс роутера
 class Router {
-    // Разбор и выполнение маршрута
     public function dispatch() {
-        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $uri = trim(parse_url($uri, PHP_URL_PATH), '/');
         $parts = $uri ? explode('/', $uri) : [];
 
-        $controller = $parts[0] ?? 'Home';
-        $method = $parts[1] ?? 'index';
+        $controller = !empty($parts[0]) ? ucfirst(strtolower($parts[0])) : 'Home';
+        $method = !empty($parts[1]) ? $parts[1] : 'index';
         $params = array_slice($parts, 2);
 
-        $controller = ucfirst(strtolower($controller));
         $file = "app/Controller/$controller.php";
 
         if (!file_exists($file)) {
@@ -31,7 +28,6 @@ class Router {
         $instance->$method(...$params);
     }
 
-    // Отображение 404
     private function show_404($error) {
         header('HTTP/1.1 404 Not Found');
         $title = '404';

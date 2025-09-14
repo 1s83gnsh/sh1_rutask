@@ -1,9 +1,7 @@
 <?php
-// Контроллер главной страницы
 require_once __DIR__ . '/../Libraries/Controller.php';
 
 class Home extends Controller {
-    // Главная страница
     public function index(...$params) {
         $data = [
             'header' => 'Simple PHP MVC Framework',

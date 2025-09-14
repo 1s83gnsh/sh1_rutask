@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Загрузка конфигурации
 require_once 'app/config.php';
 
